@@ -10,7 +10,7 @@ echo
 
 # Check if the virtual environment activation script exists
 if [ ! -f "$activate_script" ]; then
-    echo "Error: Virtual environment activation script not found. Please check your virtual environment path."
+    echo "Error: Virtual environment activation script not found at $activate_script. Please check your virtual environment path."
     exit 1
 fi
 
