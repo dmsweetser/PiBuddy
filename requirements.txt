@@ -1,1 +1,2 @@
-// Add whatever requirements we need
+Pillow
+epd2in13_V4

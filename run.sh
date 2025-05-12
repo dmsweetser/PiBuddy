@@ -1,58 +1,55 @@
-// Convert this to be for Linux
+#!/bin/bash
 
-# @echo off
-# setlocal enabledelayedexpansion
+# Set the path to the virtual environment activation script
+activate_script="venv/bin/activate"
 
-# REM Set the path to the virtual environment activation script
-# set "activate_script=venv\Scripts\activate"
+# Display diagnostic information
+echo "--- Diagnostic Information ---"
+echo "Virtual Environment Activation Script: $activate_script"
+echo
 
-# REM Display diagnostic information
-# echo --- Diagnostic Information ---
-# echo Virtual Environment Activation Script: %activate_script%
-# echo.
+# Check if the virtual environment activation script exists
+if [ ! -f "$activate_script" ]; then
+    echo "Error: Virtual environment activation script not found. Please check your virtual environment path."
+    exit 1
+fi
 
-# REM Check if the virtual environment activation script exists
-# if not exist "!activate_script!" (
-#     echo Error: Virtual environment activation script not found. Please check your virtual environment path.
-#     exit /b 1
-# )
+# Activate the virtual environment
+source "$activate_script"
 
-# REM Activate the virtual environment
-# call "!activate_script!"
+# Check if the virtual environment is activated
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "Error: Virtual environment is not activated. Please activate it before running this script."
+    exit 1
+fi
 
-# REM Check if the virtual environment is activated
-# if not defined VIRTUAL_ENV (
-#     echo Error: Virtual environment is not activated. Please activate it before running this script.
-#     exit /b 1
-# )
+echo "Virtual environment activated successfully."
 
-# echo Virtual environment activated successfully.
+# Display diagnostic information
+echo
+echo "--- Script Execution ---"
+echo "Running Python script: script.py"
+echo
 
-# REM Display diagnostic information
-# echo.
-# echo --- Script Execution ---
-# echo Running Python script: script.py
-# echo.
+# Run your Python script within the virtual environment
+python script.py
 
-# REM Run your Python script within the virtual environment
-# python script.py
+# Check the exit code of the script
+if [ $? -ne 0 ]; then
+    echo "Error: The Python script encountered an error."
+    exit 1
+fi
 
-# REM Check the exit code of the script
-# if %errorlevel% neq 0 (
-#     echo Error: The Python script encountered an error.
-#     exit /b 1
-# )
+echo "Script executed successfully."
 
-# echo Script executed successfully.
+# Deactivate the virtual environment
+deactivate
+if [ $? -ne 0 ]; then
+    echo "Error: Unable to deactivate virtual environment."
+    exit 1
+fi
 
-# REM Deactivate the virtual environment
-# call deactivate
-# if %errorlevel% neq 0 (
-#     echo Error: Unable to deactivate virtual environment.
-#     exit /b 1
-# )
+echo "Virtual environment deactivated successfully."
 
-# echo Virtual environment deactivated successfully.
-
-# echo.
-# echo Script execution complete.
+echo
+echo "Script execution complete."
