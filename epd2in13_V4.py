@@ -31,13 +31,14 @@
 
 
 import logging
-import epdconfig
+from epdconfig import RaspberryPi
 
 # Display resolution
 EPD_WIDTH       = 122
 EPD_HEIGHT      = 250
 
 logger = logging.getLogger(__name__)
+epdconfig = RaspberryPi()
 
 class EPD:
     def __init__(self):
