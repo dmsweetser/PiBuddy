@@ -13,13 +13,13 @@ epd.Clear(0xFF)
 print("e-Ink display initialized and cleared.")
 
 # Define the robot's initial position and appearance
-robot_x = 100
-robot_y = 50
+robot_x = 50
+robot_y = 60
 robot_size = 30
 
 # Define the moose's initial position and appearance
-moose_x = 200
-moose_y = 50
+moose_x = 150
+moose_y = 60
 moose_size = 40
 
 # Define the robot's movement and animation
@@ -83,8 +83,8 @@ phrases = [
 try:
     while True:
         print("Creating a new image...")
-        # Create a new image
-        image = Image.new('1', (epd.width, epd.height), 255)
+        # Create a new image with swapped dimensions for landscape mode
+        image = Image.new('1', (epd.height, epd.width), 255)
         draw = ImageDraw.Draw(image)
 
         # Choose a random action for the robot
@@ -92,17 +92,21 @@ try:
         print(f"Selected action: {action}")
 
         # Draw the robot
-        draw_robot(draw, robot_x, robot_y, robot_size, action)
+        draw_robot(draw, robot_y, robot_x, robot_size, action)
 
         # Draw the moose if the robot is fighting
         if action == "fight":
-            draw_moose(draw, moose_x, moose_y, moose_size)
+            draw_moose(draw, moose_y, moose_x, moose_size)
 
         # Display a random phrase if the robot is talking
         if action == "talk":
             phrase = random.choice(phrases)
             print(f"Displaying phrase: {phrase}")
-            draw.text((robot_x - 30, robot_y - 40), phrase, fill=0)
+            # Draw a dialogue box to the right of the robot
+            dialogue_box_x = robot_x + robot_size + 10
+            dialogue_box_y = robot_y - 20
+            draw.rectangle((dialogue_box_x, dialogue_box_y, dialogue_box_x + 100, dialogue_box_y + 40), fill=255, outline=0)
+            draw.text((dialogue_box_x + 5, dialogue_box_y + 5), phrase, fill=0)
 
         # Display the image on the e-Ink display
         print("Displaying image on e-Ink display...")
@@ -114,11 +118,11 @@ try:
         robot_y += random.randint(-5, 5)
 
         # Ensure the robot stays within the display bounds
-        robot_x = max(robot_size, min(epd.width - robot_size, robot_x))
-        robot_y = max(robot_size, min(epd.height - robot_size, robot_y))
+        robot_x = max(robot_size, min(epd.height - robot_size, robot_x))
+        robot_y = max(robot_size, min(epd.width - robot_size, robot_y))
 
-        # Wait for a short period before updating the display again
-        time.sleep(0.5)
+        # Wait for a longer period before updating the display again
+        time.sleep(2)
 
 except KeyboardInterrupt:
     print("Keyboard interrupt detected. Cleaning up...")
