@@ -6,7 +6,7 @@ import traceback
 import random
 
 # Initialize the e-Ink display
-epd = epd.EPD(reset_pin=17, dc_pin=25, busy_pin=24, cs_pin=8)
+epd = epd.EPD()
 epd.init()
 epd.Clear(0xFF)
 
