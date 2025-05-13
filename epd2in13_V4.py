@@ -295,7 +295,7 @@ class EPD:
     parameter:
     '''
     def init(self):
-        if (epdconfig.module_init() != 0):
+        if (self.module_init() != 0):
             return -1
         # EPD hardware init start
         self.reset()
@@ -334,7 +334,7 @@ class EPD:
     parameter:
     '''
     def init_fast(self):
-        if (epdconfig.module_init() != 0):
+        if (self.module_init() != 0):
             return -1
         # EPD hardware init start
         self.reset()
