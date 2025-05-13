@@ -84,7 +84,7 @@ try:
     while True:
         print("Creating a new image...")
         # Create a new image
-        image = Image.new('1', (epd.height, epd.width), 255)
+        image = Image.new('1', (epd.width, epd.height), 255)
         draw = ImageDraw.Draw(image)
 
         # Choose a random action for the robot
