@@ -4,6 +4,7 @@ import time
 from PIL import Image, ImageDraw, ImageFont
 import traceback
 import random
+import textwrap
 
 # Initialize the e-Ink display
 print("Initializing e-Ink display...")
@@ -102,11 +103,13 @@ try:
         if action == "talk":
             phrase = random.choice(phrases)
             print(f"Displaying phrase: {phrase}")
-            # Draw a dialogue box to the right of the robot
-            dialogue_box_x = robot_x + robot_size + 10
-            dialogue_box_y = robot_y - 20
+            # Draw a dialogue box in the top right corner
+            dialogue_box_x = epd.height - 110
+            dialogue_box_y = 10
             draw.rectangle((dialogue_box_x, dialogue_box_y, dialogue_box_x + 100, dialogue_box_y + 40), fill=255, outline=0)
-            draw.text((dialogue_box_x + 5, dialogue_box_y + 5), phrase, fill=0)
+            # Wrap the text to fit in the dialogue box
+            wrapped_text = textwrap.fill(phrase, width=12)
+            draw.text((dialogue_box_x + 5, dialogue_box_y + 5), wrapped_text, fill=0)
 
         # Display the image on the e-Ink display
         print("Displaying image on e-Ink display...")
@@ -114,8 +117,10 @@ try:
         print("Image displayed.")
 
         # Move the robot randomly
-        robot_x += random.randint(-5, 5)
-        robot_y += random.randint(-5, 5)
+        if action == "walk":
+            robot_x += random.choice([-5, 5])
+        elif action == "dance":
+            robot_x += random.choice([-10, 10])
 
         # Ensure the robot stays within the display bounds
         robot_x = max(robot_size, min(epd.height - robot_size, robot_x))
