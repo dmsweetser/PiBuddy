@@ -14,12 +14,12 @@ epd.Clear(0xFF)
 print("e-Ink display initialized and cleared.")
 
 # Define the robot's initial position and appearance
-robot_x = 50
+robot_x = 30
 robot_y = 60
 robot_size = 30
 
 # Define the moose's initial position and appearance
-moose_x = 150
+moose_x = 200
 moose_y = 60
 moose_size = 40
 
@@ -43,6 +43,9 @@ def draw_robot(draw, x, y, size, action):
     if action == "dance":
         draw.line((x - size, y + size, x - 2 * size, y), fill=0, width=2)
         draw.line((x + size, y + size, x + 2 * size, y), fill=0, width=2)
+    elif action == "fight":
+        # Draw a slashing sword
+        draw.line((x + size, y, x + 3 * size, y - size), fill=0, width=2)
     else:
         draw.line((x - size, y + size, x - 2 * size, y + size), fill=0, width=2)
         draw.line((x + size, y + size, x + 2 * size, y + size), fill=0, width=2)
@@ -127,7 +130,10 @@ try:
         robot_y = max(robot_size, min(epd.width - robot_size, robot_y))
 
         # Wait for a longer period before updating the display again
-        time.sleep(2)
+        if action == "talk":
+            time.sleep(5)  # Longer delay for talking
+        else:
+            time.sleep(1)  # Shorter delay for other actions
 
 except KeyboardInterrupt:
     print("Keyboard interrupt detected. Cleaning up...")
