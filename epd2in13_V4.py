@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class EPD:
-    def __init__(self, reset_pin, dc_pin, busy_pin, cs_pin):
+    def __init__(self, reset_pin=17, dc_pin=25, busy_pin=24, cs_pin=8):
         self.reset_pin = reset_pin
         self.dc_pin = dc_pin
         self.busy_pin = busy_pin
