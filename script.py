@@ -6,9 +6,11 @@ import traceback
 import random
 
 # Initialize the e-Ink display
+print("Initializing e-Ink display...")
 epd = epd.EPD()
 epd.init()
 epd.Clear(0xFF)
+print("e-Ink display initialized and cleared.")
 
 # Define the robot's initial position and appearance
 robot_x = 100
@@ -22,6 +24,7 @@ moose_size = 40
 
 # Define the robot's movement and animation
 def draw_robot(draw, x, y, size, action):
+    print(f"Drawing robot at ({x}, {y}) with action: {action}")
     # Draw the robot's head
     draw.ellipse((x - size, y - size, x + size, y + size), fill=0)
     # Draw the robot's eyes
@@ -52,6 +55,7 @@ def draw_robot(draw, x, y, size, action):
 
 # Define the moose's appearance
 def draw_moose(draw, x, y, size):
+    print(f"Drawing moose at ({x}, {y})")
     # Draw the moose's head
     draw.ellipse((x - size, y - size, x + size, y + size), fill=0)
     # Draw the moose's antlers
@@ -78,12 +82,14 @@ phrases = [
 # Main loop
 try:
     while True:
+        print("Creating a new image...")
         # Create a new image
         image = Image.new('1', (epd.height, epd.width), 255)
         draw = ImageDraw.Draw(image)
 
         # Choose a random action for the robot
         action = random.choice(["walk", "dance", "fight", "talk"])
+        print(f"Selected action: {action}")
 
         # Draw the robot
         draw_robot(draw, robot_x, robot_y, robot_size, action)
@@ -95,10 +101,13 @@ try:
         # Display a random phrase if the robot is talking
         if action == "talk":
             phrase = random.choice(phrases)
+            print(f"Displaying phrase: {phrase}")
             draw.text((robot_x - 30, robot_y - 40), phrase, fill=0)
 
         # Display the image on the e-Ink display
+        print("Displaying image on e-Ink display...")
         epd.display(epd.getbuffer(image))
+        print("Image displayed.")
 
         # Move the robot randomly
         robot_x += random.randint(-5, 5)
@@ -112,6 +121,7 @@ try:
         time.sleep(0.5)
 
 except KeyboardInterrupt:
+    print("Keyboard interrupt detected. Cleaning up...")
     # Clean up the e-Ink display
     epd.init()
     epd.Clear(0xFF)
