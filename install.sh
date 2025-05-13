@@ -3,6 +3,8 @@
 # Update package list and install prerequisites
 sudo apt-get update
 sudo apt-get install -y python3 python3-venv
+sudo apt-get install -y libjpeg-dev
+sudo apt-get install -y zlib1g-dev libfreetype6-dev
 
 # Create a virtual environment using the available Python version
 python3 -m venv venv
