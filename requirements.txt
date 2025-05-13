@@ -2,3 +2,4 @@ Pillow
 spidev
 gpiozero
 RPi.GPIO
+lgpio
