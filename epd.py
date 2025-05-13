@@ -85,7 +85,7 @@ def module_init():
     GPIO.setup(BUSY_PIN, GPIO.IN)
     SPI.max_speed_hz = 2000000
     SPI.mode = 0b00
-    return 0;
+    return 0
 
 
 # Display resolution
@@ -166,7 +166,9 @@ class EPD:
         self.send_command(0x20)
         self.wait_until_idle()
 
-    def init(self, update):
+    def init(self, update = None):
+        if update is None:
+            update = self.FULL_UPDATE
         if (module_init() != 0):
             return -1
         # EPD hardware init start
