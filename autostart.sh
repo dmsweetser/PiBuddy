@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define paths
-SCRIPT_DIR="~/PiBuddy"
+SCRIPT_DIR="/home/daniel/PiBuddy"
 RUN_SCRIPT_PATH="$SCRIPT_DIR/run.sh"
 SERVICE_NAME="robot"
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
