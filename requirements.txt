@@ -1,2 +1,3 @@
 Pillow
 spidev
+gpiozero
