@@ -34,11 +34,14 @@ dog_x = 200
 dog_y = 60
 dog_size = 20
 
-# Define the cat's movement and animation
+# Define the cat's appearance
 def draw_cat(draw, x, y, size, action):
     print(f"Drawing cat at ({x}, {y}) with action: {action}")
     # Draw the cat's head
     draw.ellipse((x - size, y - size, x + size, y + size), fill=0)
+    # Draw the cat's ears
+    draw.polygon([(x - size, y - size), (x - size - 10, y - size - 10), (x - size, y - size - 20)], fill=0)
+    draw.polygon([(x + size, y - size), (x + size + 10, y - size - 10), (x + size, y - size - 20)], fill=0)
     # Draw the cat's eyes
     draw.ellipse((x - size // 2, y - size // 2, x - size // 4, y - size // 4), fill=255)
     draw.ellipse((x + size // 4, y - size // 2, x + size // 2, y - size // 4), fill=255)
@@ -117,10 +120,22 @@ try:
         object_to_draw = random.choice([None, "mouse", "rock", "dog"])
         if object_to_draw == "mouse":
             draw_mouse(draw, mouse_y, mouse_x, mouse_size)
+            # Check for interaction with the cat
+            if abs(cat_x - mouse_x) < cat_size + mouse_size:
+                action = "talk"
+                draw_cat(draw, cat_y, cat_x, cat_size, action)
         elif object_to_draw == "rock":
             draw_rock(draw, rock_y, rock_x, rock_size)
+            # Check for interaction with the cat
+            if abs(cat_x - rock_x) < cat_size + rock_size:
+                action = "talk"
+                draw_cat(draw, cat_y, cat_x, cat_size, action)
         elif object_to_draw == "dog":
             draw_dog(draw, dog_y, dog_x, dog_size)
+            # Check for interaction with the cat
+            if abs(cat_x - dog_x) < cat_size + dog_size:
+                action = "talk"
+                draw_cat(draw, cat_y, cat_x, cat_size, action)
 
         # Display the image on the e-Ink display
         print("Displaying image on e-Ink display...")
@@ -129,11 +144,10 @@ try:
 
         # Move the cat randomly
         if action == "walk":
-            cat_x += random.choice([-5, 5])
+            cat_x += random.choice([-10, 10])  # Bigger leaps
 
         # Ensure the cat stays within the display bounds
         cat_x = max(cat_size, min(epd.height - cat_size, cat_x))
-        cat_y = max(cat_size, min(epd.width - cat_size, cat_y))
 
         # Wait for a longer period before updating the display again
         if action == "talk":
