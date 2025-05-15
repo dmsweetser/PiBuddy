@@ -19,7 +19,7 @@ cat_y = 60
 cat_size = 30
 
 # Define the ground's initial position
-ground_y = epd.width - 10
+ground_y = epd.height - 10
 
 # Define the objects' initial positions and appearances
 mouse_x = 200
@@ -33,6 +33,15 @@ rock_size = 15
 dog_x = 200
 dog_y = 60
 dog_size = 20
+
+# Define the phrases the cat can say
+phrases = [
+    "Hello there!",
+    "Nice day, isn't it?",
+    "I love walking around!",
+    "Watch out for mice!",
+    "Meow!"
+]
 
 # Define the cat's appearance
 def draw_cat(draw, x, y, size, action):
@@ -48,6 +57,16 @@ def draw_cat(draw, x, y, size, action):
     # Draw the cat's mouth
     if action == "talk":
         draw.rectangle((x - size // 2, y + size // 2, x + size // 2, y + size), fill=0)
+        # Display a random phrase
+        phrase = random.choice(phrases)
+        print(f"Displaying phrase: {phrase}")
+        # Draw a dialogue box near the cat
+        dialogue_box_x = x + size + 10
+        dialogue_box_y = y - size
+        draw.rectangle((dialogue_box_x, dialogue_box_y, dialogue_box_x + 100, dialogue_box_y + 40), fill=255, outline=0)
+        # Wrap the text to fit in the dialogue box
+        wrapped_text = textwrap.fill(phrase, width=12)
+        draw.text((dialogue_box_x + 5, dialogue_box_y + 5), wrapped_text, fill=0)
     else:
         draw.arc((x - size // 2, y + size // 4, x + size // 2, y + size), start=0, end=180, fill=0)
 
@@ -96,14 +115,14 @@ def draw_dog(draw, x, y, size):
 def draw_ground(draw, y):
     print(f"Drawing ground at y={y}")
     # Draw the ground
-    draw.rectangle((0, y, epd.height, y + 10), fill=0)
+    draw.rectangle((0, y, epd.width, y + 10), fill=0)
 
 # Main loop
 try:
     while True:
         print("Creating a new image...")
-        # Create a new image with swapped dimensions for landscape mode
-        image = Image.new('1', (epd.height, epd.width), 255)
+        # Create a new image with the correct dimensions
+        image = Image.new('1', (epd.width, epd.height), 255)
         draw = ImageDraw.Draw(image)
 
         # Choose a random action for the cat
@@ -111,7 +130,7 @@ try:
         print(f"Selected action: {action}")
 
         # Draw the cat
-        draw_cat(draw, cat_y, cat_x, cat_size, action)
+        draw_cat(draw, cat_x, cat_y, cat_size, action)
 
         # Draw the ground
         draw_ground(draw, ground_y)
@@ -119,35 +138,35 @@ try:
         # Randomly decide whether to draw an object
         object_to_draw = random.choice([None, "mouse", "rock", "dog"])
         if object_to_draw == "mouse":
-            draw_mouse(draw, mouse_y, mouse_x, mouse_size)
+            draw_mouse(draw, mouse_x, mouse_y, mouse_size)
             # Check for interaction with the cat
             if abs(cat_x - mouse_x) < cat_size + mouse_size:
                 action = "talk"
-                draw_cat(draw, cat_y, cat_x, cat_size, action)
+                draw_cat(draw, cat_x, cat_y, cat_size, action)
         elif object_to_draw == "rock":
-            draw_rock(draw, rock_y, rock_x, rock_size)
+            draw_rock(draw, rock_x, rock_y, rock_size)
             # Check for interaction with the cat
             if abs(cat_x - rock_x) < cat_size + rock_size:
                 action = "talk"
-                draw_cat(draw, cat_y, cat_x, cat_size, action)
+                draw_cat(draw, cat_x, cat_y, cat_size, action)
         elif object_to_draw == "dog":
-            draw_dog(draw, dog_y, dog_x, dog_size)
+            draw_dog(draw, dog_x, dog_y, dog_size)
             # Check for interaction with the cat
             if abs(cat_x - dog_x) < cat_size + dog_size:
                 action = "talk"
-                draw_cat(draw, cat_y, cat_x, cat_size, action)
+                draw_cat(draw, cat_x, cat_y, cat_size, action)
 
         # Display the image on the e-Ink display
         print("Displaying image on e-Ink display...")
         epd.display(epd.getbuffer(image))
         print("Image displayed.")
 
-        # Move the cat randomly
+        # Move the cat horizontally
         if action == "walk":
-            cat_x += random.choice([-10, 10])  # Bigger leaps
+            cat_x += random.choice([-10, 10])  # Bigger leaps horizontally
 
-        # Ensure the cat stays within the display bounds
-        cat_x = max(cat_size, min(epd.height - cat_size, cat_x))
+        # Ensure the cat stays within the display bounds horizontally
+        cat_x = max(cat_size, min(epd.width - cat_size, cat_x))
 
         # Wait for a longer period before updating the display again
         if action == "talk":
