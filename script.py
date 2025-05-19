@@ -13,10 +13,10 @@ epd.init()
 epd.Clear(0xFF)
 print("e-Ink display initialized and cleared.")
 
-# Define the cat's initial position and appearance
-cat_x = 30
-cat_y = 60
-cat_size = 30
+# Define Hobbes' initial position and appearance
+hobbes_x = 30
+hobbes_y = 60
+hobbes_size = 30
 
 # Define the ground's initial position
 ground_y = epd.width - 10
@@ -35,7 +35,7 @@ butterfly_y = 60
 butterfly_size = 10
 
 # Define Hobbes' appearance
-def draw_cat(draw, x, y, size, action):
+def draw_hobbes(draw, x, y, size, action):
     print(f"Drawing Hobbes at ({x}, {y}) with action: {action}")
     # Draw Hobbes' head
     draw.ellipse((x - size, y - size, x + size, y + size), fill=255)
@@ -45,11 +45,13 @@ def draw_cat(draw, x, y, size, action):
     # Draw Hobbes' eyes
     draw.ellipse((x - size // 2, y - size // 2, x - size // 4, y - size // 4), fill=0)
     draw.ellipse((x + size // 4, y - size // 2, x + size // 2, y - size // 4), fill=0)
+    # Draw Hobbes' nose
+    draw.ellipse((x - 5, y + 5, x + 5, y + 15), fill=0)
     # Draw Hobbes' mouth
     if action == "meow":
-        draw.rectangle((x - size // 2, y + size // 2, x + size // 2, y + size), fill=0)
-    else:
         draw.arc((x - size // 2, y + size // 4, x + size // 2, y + size), start=0, end=180, fill=0)
+    else:
+        draw.line((x - size // 4, y + size // 2, x + size // 4, y + size // 2), fill=0, width=2)
 
     # Draw Hobbes' stripes
     stripe_width = 3
@@ -114,7 +116,7 @@ try:
         print(f"Selected action: {action}")
 
         # Draw Hobbes
-        draw_cat(draw, cat_y, cat_x, cat_size, action)
+        draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
 
         # Draw the ground
         draw_ground(draw, ground_y)
@@ -124,21 +126,21 @@ try:
         if object_to_draw == "bird":
             draw_bird(draw, bird_y, bird_x, bird_size)
             # Check for interaction with Hobbes
-            if abs(cat_x - bird_x) < cat_size + bird_size:
+            if abs(hobbes_x - bird_x) < hobbes_size + bird_size:
                 action = "meow"
-                draw_cat(draw, cat_y, cat_x, cat_size, action)
+                draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
         elif object_to_draw == "fishbowl":
             draw_fishbowl(draw, fishbowl_y, fishbowl_x, fishbowl_size)
             # Check for interaction with Hobbes
-            if abs(cat_x - fishbowl_x) < cat_size + fishbowl_size:
+            if abs(hobbes_x - fishbowl_x) < hobbes_size + fishbowl_size:
                 action = "observe"
-                draw_cat(draw, cat_y, cat_x, cat_size, action)
+                draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
         elif object_to_draw == "butterfly":
             draw_butterfly(draw, butterfly_y, butterfly_x, butterfly_size)
             # Check for interaction with Hobbes
-            if abs(cat_x - butterfly_x) < cat_size + butterfly_size:
+            if abs(hobbes_x - butterfly_x) < hobbes_size + butterfly_size:
                 action = "walk"
-                draw_cat(draw, cat_y, cat_x, cat_size, action)
+                draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
 
         # Display the image on the e-Ink display
         print("Displaying image on e-Ink display...")
@@ -147,10 +149,10 @@ try:
 
         # Move Hobbes randomly
         if action == "walk":
-            cat_x += random.choice([-5, 5])  # Smaller leaps for smoother movement
+            hobbes_x += random.choice([-5, 5])  # Smaller leaps for smoother movement
 
         # Ensure Hobbes stays within the display bounds
-        cat_x = max(cat_size, min(epd.height - cat_size, cat_x))
+        hobbes_x = max(hobbes_size, min(epd.height - hobbes_size, hobbes_x))
 
         # Wait for a longer period before updating the display again
         if action == "meow":
