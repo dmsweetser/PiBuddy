@@ -12,103 +12,83 @@ epd.init()
 epd.Clear(0xFF)
 print("e-Ink display initialized and cleared.")
 
-# Define Hobbes' initial position and appearance
-hobbes_x = 30
-hobbes_y = 60
-hobbes_size = 30
+# Define the face's initial position and size
+face_x = epd.width // 2
+face_y = epd.height // 2
+face_size = 50
 
 # Define the ground's initial position
 ground_y = epd.width - 10
 
-# Define the objects' initial positions and appearances
-bird_x = 200
-bird_y = 60
-bird_size = 10
+# Define the text's initial position
+text_x = 10
+text_y = 10
 
-fishbowl_x = 200
-fishbowl_y = 60
-fishbowl_size = 15
+def draw_face(draw, x, y, size, action):
+    print(f"Drawing face at ({x}, {y}) with action: {action}")
 
-butterfly_x = 200
-butterfly_y = 60
-butterfly_size = 10
-
-# Define Hobbes' appearance using anti-aliasing
-def draw_hobbes(draw, x, y, size, action):
-    print(f"Drawing Hobbes at ({x}, {y}) with action: {action}")
-
-    # Draw Hobbes' head with anti-aliasing
+    # Draw the face outline
     draw.ellipse((x - size, y - size, x + size, y + size), fill='white', outline='black')
 
-    # Draw Hobbes' ears with anti-aliasing
-    draw.polygon([(x - size, y - size), (x - size - 10, y - size - 10), (x - size, y - size - 20)], fill='white', outline='black')
-    draw.polygon([(x + size, y - size), (x + size + 10, y - size - 10), (x + size, y - size - 20)], fill='white', outline='black')
+    # Draw the eyes
+    eye_size = size // 4
+    left_eye_x = x - size // 2
+    right_eye_x = x + size // 2
 
-    # Draw Hobbes' eyes with anti-aliasing
-    draw.ellipse((x - size // 2, y - size // 2, x - size // 4, y - size // 4), fill='black')
-    draw.ellipse((x + size // 4, y - size // 2, x + size // 2, y - size // 4), fill='black')
-
-    # Draw Hobbes' nose with anti-aliasing
-    draw.ellipse((x - 5, y + 5, x + 5, y + 15), fill='black')
-
-    # Draw Hobbes' mouth with anti-aliasing
-    if action == "meow":
-        draw.arc((x - size // 2, y + size // 4, x + size // 2, y + size), start=0, end=180, fill='black')
+    if action == "happy":
+        # Draw happy eyes
+        draw.ellipse((left_eye_x - eye_size, y - size // 2 - eye_size, left_eye_x + eye_size, y - size // 2 + eye_size), fill='black')
+        draw.ellipse((right_eye_x - eye_size, y - size // 2 - eye_size, right_eye_x + eye_size, y - size // 2 + eye_size), fill='black')
+    elif action == "sad":
+        # Draw sad eyes
+        draw.arc((left_eye_x - eye_size, y - size // 2 - eye_size, left_eye_x + eye_size, y - size // 2 + eye_size), start=0, end=180, fill='black')
+        draw.arc((right_eye_x - eye_size, y - size // 2 - eye_size, right_eye_x + eye_size, y - size // 2 + eye_size), start=0, end=180, fill='black')
     else:
+        # Draw neutral eyes
+        draw.ellipse((left_eye_x - eye_size, y - size // 2 - eye_size, left_eye_x + eye_size, y - size // 2 + eye_size), fill='black')
+        draw.ellipse((right_eye_x - eye_size, y - size // 2 - eye_size, right_eye_x + eye_size, y - size // 2 + eye_size), fill='black')
+
+    # Draw the eyebrows
+    eyebrow_length = size // 2
+    left_eyebrow_y = y - size // 2 - eye_size - 5
+    right_eyebrow_y = y - size // 2 - eye_size - 5
+
+    if action == "happy":
+        # Draw happy eyebrows
+        draw.line((left_eye_x - eyebrow_length, left_eyebrow_y, left_eye_x + eyebrow_length, left_eyebrow_y - 10), fill='black', width=2)
+        draw.line((right_eye_x - eyebrow_length, right_eyebrow_y, right_eye_x + eyebrow_length, right_eyebrow_y - 10), fill='black', width=2)
+    elif action == "sad":
+        # Draw sad eyebrows
+        draw.line((left_eye_x - eyebrow_length, left_eyebrow_y + 10, left_eye_x + eyebrow_length, left_eyebrow_y), fill='black', width=2)
+        draw.line((right_eye_x - eyebrow_length, right_eyebrow_y + 10, right_eye_x + eyebrow_length, right_eyebrow_y), fill='black', width=2)
+    else:
+        # Draw neutral eyebrows
+        draw.line((left_eye_x - eyebrow_length, left_eyebrow_y, left_eye_x + eyebrow_length, left_eyebrow_y), fill='black', width=2)
+        draw.line((right_eye_x - eyebrow_length, right_eyebrow_y, right_eye_x + eyebrow_length, right_eyebrow_y), fill='black', width=2)
+
+    # Draw the mouth
+    if action == "happy":
+        # Draw a large smile with rounded teeth
+        draw.arc((x - size // 2, y + size // 4, x + size // 2, y + 3 * size // 4), start=0, end=180, fill='black')
+        tooth_size = size // 6
+        for i in range(-size // 2 + tooth_size, size // 2, tooth_size * 2):
+            draw.rectangle((x + i - tooth_size // 2, y + size // 2, x + i + tooth_size // 2, y + 3 * size // 4), fill='white', outline='black')
+    elif action == "sad":
+        # Draw a frown
+        draw.arc((x - size // 2, y + size // 2, x + size // 2, y + 3 * size // 2), start=180, end=360, fill='black')
+    else:
+        # Draw a neutral mouth
         draw.line((x - size // 4, y + size // 2, x + size // 4, y + size // 2), fill='black', width=2)
 
-    # Draw Hobbes' stripes with anti-aliasing
-    stripe_width = 3
-    for i in range(-size, size, stripe_width * 2):
-        draw.line((x + i, y - size, x + i + stripe_width, y + size), fill='black', width=stripe_width)
-
-    # Draw Hobbes' body with anti-aliasing
-    draw.rectangle((x - size, y + size, x + size, y + 2 * size), fill='white', outline='black')
-
-    # Draw Hobbes' legs with anti-aliasing
-    if action == "walk":
-        draw.line((x - size // 2, y + 2 * size, x - size // 2, y + 3 * size), fill='black', width=2)
-        draw.line((x + size // 2, y + 2 * size, x + size, y + 3 * size), fill='black', width=2)
-    else:
-        draw.line((x - size // 2, y + 2 * size, x - size // 2, y + 3 * size), fill='black', width=2)
-        draw.line((x + size // 2, y + 2 * size, x + size // 2, y + 3 * size), fill='black', width=2)
-
-# Define the bird's appearance
-def draw_bird(draw, x, y, size):
-    print(f"Drawing bird at ({x}, {y})")
-    # Draw the bird's body
-    draw.ellipse((x - size, y - size, x + size, y + size), fill='black')
-    # Draw the bird's beak
-    draw.polygon([(x + size, y), (x + size + 10, y - 5), (x + size + 10, y + 5)], fill='black')
-    # Draw the bird's wing
-    draw.ellipse((x - size // 2, y - size // 2, x + size // 2, y + size // 2), fill='black')
-
-# Define the fishbowl's appearance
-def draw_fishbowl(draw, x, y, size):
-    print(f"Drawing fishbowl at ({x}, {y})")
-    # Draw the fishbowl
-    draw.ellipse((x - size, y - size, x + size, y + size), fill='black')
-    # Draw the fish inside the bowl
-    draw.ellipse((x - size // 2, y - size // 2, x + size // 2, y + size // 2), fill='white')
-
-# Define the butterfly's appearance
-def draw_butterfly(draw, x, y, size):
-    print(f"Drawing butterfly at ({x}, {y})")
-    # Draw the butterfly's body
-    draw.ellipse((x - size // 2, y - size // 2, x + size // 2, y + size // 2), fill='black')
-    # Draw the butterfly's wings
-    draw.ellipse((x - size, y - size, x, y), fill='black')
-    draw.ellipse((x, y - size, x + size, y), fill='black')
-    draw.ellipse((x - size, y, x, y + size), fill='black')
-    draw.ellipse((x, y, x + size, y + size), fill='black')
-
-# Define the ground's appearance
 def draw_ground(draw, y):
     print(f"Drawing ground at y={y}")
     # Draw the ground
     draw.rectangle((0, y, epd.height, y + 10), fill='black')
 
-# Main loop
+def draw_text(draw, text, x, y):
+    print(f"Drawing text: {text} at ({x}, {y})")
+    draw.text((x, y), text, fill='black')
+
 try:
     while True:
         print("Creating a new image...")
@@ -116,56 +96,31 @@ try:
         image = Image.new('1', (epd.height, epd.width), 255)
         draw = ImageDraw.Draw(image)
 
-        # Choose a random action for Hobbes
-        action = random.choice(["walk", "meow", "observe"])
+        # Choose a random action for the face
+        action = random.choice(["happy", "sad", "neutral"])
         print(f"Selected action: {action}")
 
-        # Draw Hobbes
-        draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
+        # Draw the face
+        draw_face(draw, face_y, face_x, face_size, action)
 
         # Draw the ground
         draw_ground(draw, ground_y)
 
-        # Randomly decide whether to draw an object
-        object_to_draw = random.choice([None, "bird", "fishbowl", "butterfly"])
-        if object_to_draw == "bird":
-            draw_bird(draw, bird_y, bird_x, bird_size)
-            # Check for interaction with Hobbes
-            if abs(hobbes_x - bird_x) < hobbes_size + bird_size:
-                action = "meow"
-                draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
-        elif object_to_draw == "fishbowl":
-            draw_fishbowl(draw, fishbowl_y, fishbowl_x, fishbowl_size)
-            # Check for interaction with Hobbes
-            if abs(hobbes_x - fishbowl_x) < hobbes_size + fishbowl_size:
-                action = "observe"
-                draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
-        elif object_to_draw == "butterfly":
-            draw_butterfly(draw, butterfly_y, butterfly_x, butterfly_size)
-            # Check for interaction with Hobbes
-            if abs(hobbes_x - butterfly_x) < hobbes_size + butterfly_size:
-                action = "walk"
-                draw_hobbes(draw, hobbes_y, hobbes_x, hobbes_size, action)
+        # Choose a random phrase to display
+        phrases = ["Hello!", "How are you?", "Have a nice day!", "Smile!", "Stay happy!"]
+        phrase = random.choice(phrases)
+        print(f"Selected phrase: {phrase}")
+
+        # Draw the text
+        draw_text(draw, phrase, text_x, text_y)
 
         # Display the image on the e-Ink display
         print("Displaying image on e-Ink display...")
         epd.display(epd.getbuffer(image))
         print("Image displayed.")
 
-        # Move Hobbes randomly
-        if action == "walk":
-            hobbes_x += random.choice([-5, 5])  # Smaller leaps for smoother movement
-
-        # Ensure Hobbes stays within the display bounds
-        hobbes_x = max(hobbes_size, min(epd.height - hobbes_size, hobbes_x))
-
-        # Wait for a longer period before updating the display again
-        if action == "meow":
-            time.sleep(5)  # Longer delay for meowing
-        elif action == "observe":
-            time.sleep(3)  # Medium delay for observing
-        else:
-            time.sleep(1)  # Shorter delay for other actions
+        # Wait for a period before updating the display again
+        time.sleep(3)
 
 except KeyboardInterrupt:
     print("Keyboard interrupt detected. Cleaning up...")
@@ -173,5 +128,4 @@ except KeyboardInterrupt:
     epd.init()
     epd.Clear(0xFF)
     epd.sleep()
-    epd.epdconfig.module_exit(cleanup=True)
     exit()
